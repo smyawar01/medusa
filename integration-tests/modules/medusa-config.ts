@@ -37,7 +37,27 @@ const customFulfillmentProviderCalculated = {
 
 module.exports = defineConfig({
   admin: {
-    disable: true,
+    //disable: true,
+    vite: (config) => {
+      return {
+        server: {
+          host: "0.0.0.0",
+          // Allow all hosts when running in Docker (development mode)
+          // In production, this should be more restrictive
+          allowedHosts: [
+            "localhost",
+            ".localhost",
+            "127.0.0.1",
+          ],
+          hmr: {
+            // HMR websocket port inside container
+            port: 5173,
+            // Port browser connects to (exposed in docker-compose.yml)
+            clientPort: 5173,
+          },
+        },
+      }
+    },
   },
   plugins: [],
   projectConfig: {
@@ -46,6 +66,10 @@ module.exports = defineConfig({
     http: {
       jwtSecret: "test",
       cookieSecret: "test",
+    },
+    databaseDriverOptions: {
+      ssl: false,
+      sslmode: "disable",
     },
   },
   featureFlags: {},
